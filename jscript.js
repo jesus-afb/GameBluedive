@@ -1,11 +1,3 @@
-const images = {
-  bg: './grafs/BG.png ',
-  buzo: './grafs/buzoP1.png',
-  pez: './grafs/fishP2.png  ',
-  mina: './grafs/mina.png  ',
-  enemy: './grafs/enemyfish.png'
-};
-
 // variables
 // variables auxiliares
 // clases
@@ -14,17 +6,28 @@ const images = {
 // funciones main // update
 // listeners
 
+/////////////////////////////////////////////////////////////////////////////////
+//////   VARIABLES Y VARIABLES SECUNDARIAS
+/////////////////////////////////////////////////////////////////////////////
+
+const images = {
+  bg: './grafs/BG.png ',
+  buzo: './grafs/buzoP1.png',
+  pez: './grafs/fishP2.png  ',
+  mina: './grafs/mina.png  ',
+  enemy: './grafs/enemyfish1.png'
+};
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
-// Interval esta todo nuestro intervalo del juego, es para poderlo parar o seguir
-let interval;
-// ES una variable auxiliar para tener nocion del tiempo o cuanto frames han pasado
-let frames = 0;
-console.log(frames)
-// Es un array donde vamos ir guardando los obstacles
+let interval; // Interval esta todo nuestro intervalo del juego, es para poderlo parar o seguir
+let frames = 0; // ES una variable auxiliar para tener nocion del tiempo o cuanto frames han pasado
+//const obstacles = []; // Es un array donde vamos ir guardando los obstacles
 // Buena practica, deberiamos de splicear el obstacle que ya no sirve
-const obstacles = [];
 
+
+///////////////////////////////////////////////
+//////   CLASES
+/////////////////////////////////////////////
 class Board {
   constructor() {
     this.x = 0;
@@ -38,10 +41,9 @@ class Board {
     };
   }
   draw() {
-    // decrementamos x para que vaya haciendo el efecto de movimiento
-    this.x--;
-    // preguntamos si la primer imagen ya esta fuera del canvas
-    if (this.x < -canvas.width) this.x = 0;
+
+    this.x--; // decrementamos x para que vaya haciendo el efecto de movimiento
+    if (this.x < -canvas.width) this.x = 0; // preguntamos si la primer imagen ya esta fuera del canvas
     // dibujamos la imagen normal
     ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     // dibujamos la otra imagen, despues de la primer imagen, para que ocupe el espacio en blanco, cuando la primer imagen esta fuera
@@ -66,32 +68,36 @@ class Flappy {
       this.draw();
     };
   }
-  draw() {
+  draw() { //metodo dibujo del buzo
+    // efecto de gravedad
     this.y++;
-    if (this.animate > 7) {
-      this.animate = 0
+    // limites verticales del buzo
+    if (this.y < 0) {
+      this.y = 0;
     }
-    this.animate++
-
+    if (this.y > 700) {
+      this.y = 700;
+    }
+    //loop de la animacion del buzo
+    if (frames % 3 === 0) {
+      if (this.animate > 6) {
+        this.animate = 0;
+      }
+      this.animate++;
+    }
+    // sprite del buzo
     ctx.drawImage(
-      // imagen de fuente
-      this.img,
-      // posición de x en la imagen (fuente, sx)
-      (this.animate * 560) / 7,
-      // posición de y en la imagen (fuente, sy)
-      this.position * 80,
-      // ancho desde la posición de x (sw)
-      560 / 7,
-      // alto desde la posición de y (sw)
-      80,
-      // posición de x en canvas (destino, dx)
-      this.x,
-      // posición de y en canvas (destino, dy)
-      this.y,
-      // ancho desde la posición de x en canvas (dw)
-      this.width,
-      // alto desde la posición de y en canvas (dh)
-      this.height)
+
+      this.img, // imagen de fuente
+      (this.animate * 560) / 7, // posición de x en la imagen (fuente, sx)
+      this.position * 80, // posición de y en la imagen (fuente, sy)
+      560 / 7, // ancho desde la posición de x (sw)
+      80, // alto desde la posición de y (sw)
+      this.x, // posición de x en canvas (destino, dx)
+      this.y, // posición de y en canvas (destino, dy)
+      this.width, // ancho desde la posición de x en canvas (dw)
+      this.height // alto desde la posición de y en canvas (dh)
+    );
   }
 
   fly() {
@@ -109,7 +115,7 @@ class Flappy {
 
 class Mina {
   constructor() {
-    this.x = 200;
+    this.x = 800;
     this.y = 200;
     this.height = 100;
     this.width = 100;
@@ -123,26 +129,59 @@ class Mina {
   }
 }
 
-
-// class Enemy {
-//   constructor() {
-//     this.x =  y;
-//     this.y = x;
-//     this.height = 50;
-//     this.width = 50;
-//     this.img = new Image();
-//     this.img.src = images.enemy;
-//     this.type = type;
-//   }
-//   draw() {
-//     this.x--;
-//     ctx.drawImage(this.img, this.x, this.y, this.width, this.height;
-//     
-//     }
-//   }
-// }
-
-
+class Enemy {
+  constructor() {
+    // tamaño y ubicacion
+    this.x = 800;
+    this.y = 300;
+    this.height = 80;
+    this.width = 80;
+    //animacion
+    this.animate = 0;
+    this.position = 0;
+    // el grafico
+    this.img = new Image();
+    this.img.src = images.enemy;
+    this.img.onload = () => {
+      this.draw();
+    }
+    //this.type = "";
+  }
+  draw() {
+    //avance en x
+    this.x--;
+    //loop de la animacion pez
+    if (frames % 4 === 0) {
+      if (this.animate > 3) {
+        this.animate = 0;
+      }
+      this.animate++;
+      console.log(this.animate)
+    }
+    // imagenes para sprite
+    //    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    ctx.drawImage(
+      // imagen de fuente
+      this.img,
+      // posición de x en la imagen (fuente, sx)
+      (this.animate * 216) / 4,
+      // posición de y en la imagen (fuente, sy)
+      this.position * 49,
+      // ancho desde la posición de x (sw)
+      216 / 4,
+      // alto desde la posición de y (sw)
+      49,
+      // posición de x en canvas (destino, dx)
+      this.x,
+      // posición de y en canvas (destino, dy)
+      this.y,
+      // ancho desde la posición de x en canvas (dw)
+      this.width,
+      // alto desde la posición de y en canvas (dh)
+      this.height
+    );
+  }
+}
 
 // class Obstacle {
 //   constructor(y, height, type) {
@@ -165,41 +204,97 @@ class Mina {
 //     }
 //   }
 // }
-
+///////////////////////////////////////////////
+//////    INSTANCIAS
+/////////////////////////////////////////////
 const board = new Board();
 const flappy = new Flappy();
 const mina = new Mina();
+const enemy = new Enemy();
+
+///////////////////////////////////////////////
+//////   FUNCIONES
+///////////////////////////////////////////
 
 function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function update() {
-  this.frames++;
+  frames++;
   clearCanvas();
   board.draw();
   flappy.draw();
-
+  mina.draw();
+  enemy.draw();
   //checkCollition();
 }
 
-function checkCollition() {
-  obstacles.forEach((pipe) => {
-    if (flappy.isTouching(pipe)) {
-      gameOver();
-    }
-    if (flappy.y <= 0 || flappy.y >= canvas.height - flappy.height) {
-      gameOver();
-    }
-  });
-}
+// function checkCollition(objetoenemigo) {
+//   objetoenemigo.forEach((objetoenemigo) => {
+//     if (flappy.isTouching()) {
+//       gameOver();
+//     }
+//     if (flappy.y <= 0 || flappy.y >= canvas.height - flappy.height) {
+//       gameOver();
+//     }
+//   });
+// }
+
+// function checkCollition() {
+//   obstacles.forEach((mina) => {
+//     if (flappy.isTouching()) {
+//       gameOver();
+//     }
+//     if (flappy.y <= 0 || flappy.y >= canvas.height - flappy.height) {
+//       gameOver();
+//     }
+//   });
+// }
 
 function gameOver() {
   ctx.font = '30px Courier';
   ctx.fillText('Game over', canvas.width / 2, canvas.height / 2);
-
   clearInterval(interval);
 }
+
+
+
+function start() {
+  // si ya se habia ejecutado el juego, no lo dejes entrar despues
+  if (interval) return;
+  interval = setInterval(update, 1000 / 60);
+}
+
+function restart() {
+  interval = false;
+  flappy.x = 30;
+  flappy.y = 70;
+  start();
+}
+
+///////////////////////////////////////////////
+//////   LISTENERS
+/////////////////////////////////////////////
+
+document.onkeydown = (e) => {
+  switch (e.keyCode) {
+    case 32:
+      flappy.fly();
+      break;
+
+    case 13:
+      start();
+      break;
+
+    case 82:
+      restart();
+      break;
+
+    default:
+      break;
+  }
+};
 
 // function generatePipes() {
 //   // maximo de un pipe
@@ -222,35 +317,3 @@ function gameOver() {
 //   generatePipes();
 //   obstacles.forEach((pipe) => pipe.draw());
 // }
-
-function start() {
-  // si ya se habia ejecutado el juego, no lo dejes entrar despues
-  if (interval) return;
-  interval = setInterval(update, 1000 / 60);
-}
-
-function restart() {
-  interval = false;
-  flappy.x = 30;
-  flappy.y = 70;
-  start();
-}
-
-document.onkeydown = (e) => {
-  switch (e.keyCode) {
-    case 32:
-      flappy.fly();
-      break;
-
-    case 13:
-      start();
-      break;
-
-    case 82:
-      restart();
-      break;
-
-    default:
-      break;
-  }
-};
