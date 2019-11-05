@@ -21,7 +21,7 @@ const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 let interval; // Interval esta todo nuestro intervalo del juego, es para poderlo parar o seguir
 let frames = 0; // ES una variable auxiliar para tener nocion del tiempo o cuanto frames han pasado
-//const obstacles = []; // Es un array donde vamos ir guardando los obstacles
+const obstacles = []; // Es un array donde vamos ir guardando los obstacles
 // Buena practica, deberiamos de splicear el obstacle que ya no sirve
 
 
@@ -103,14 +103,14 @@ class Flappy {
   fly() {
     this.y -= 20;
   }
-  // isTouching(obstacle) {
-  //   return (
-  //     this.x < obstacle.x + obstacle.width &&
-  //     this.x + this.width > obstacle.x &&
-  //     this.y < obstacle.y + obstacle.height &&
-  //     this.y + this.height > obstacle.y
-  //   );
-  // }
+  isTouching(obstacle) {
+    return (
+      this.x < obstacle.x + obstacle.width &&
+      this.x + this.width > obstacle.x &&
+      this.y < obstacle.y + obstacle.height &&
+      this.y + this.height > obstacle.y
+    );
+  }
 }
 
 class Mina {
@@ -227,32 +227,43 @@ function update() {
   flappy.draw();
   mina.draw();
   enemy.draw();
-  //checkCollition();
+  checkCollition();
+  drawObstacles();
+  generarminas();
 }
 
-// function checkCollition(objetoenemigo) {
-//   objetoenemigo.forEach((objetoenemigo) => {
-//     if (flappy.isTouching()) {
-//       gameOver();
-//     }
-//     if (flappy.y <= 0 || flappy.y >= canvas.height - flappy.height) {
-//       gameOver();
-//     }
-//   });
-// }
+function checkCollition() {
+  obstacles.forEach((pipe) => {
+    if (flappy.isTouching(pipe)) {
+      gameOver();
+    }
+  });
+}
+
+function generarminas() {
+  if (frames % 200 === 0) {
+    const randomPosition = Math.floor(Math.random() * canvas.height) + 50
+    const mina = new Mina(randomPosition)
+    obstacles.push(mina)
+  }
+}
+
+function drawObstacles() {
+  obstacles.forEach(mina => mina.draw())
+}
+
+
 
 // function checkCollition() {
-//   obstacles.forEach((mina) => {
-//     if (flappy.isTouching()) {
-//       gameOver();
-//     }
-//     if (flappy.y <= 0 || flappy.y >= canvas.height - flappy.height) {
+//   obstacles.forEach((pipe) => {
+//     if (flappy.isTouching(pipe)) {
 //       gameOver();
 //     }
 //   });
 // }
 
-function gameOver() {
+
+function gameOver() { // texto de game over
   ctx.font = '30px Courier';
   ctx.fillText('Game over', canvas.width / 2, canvas.height / 2);
   clearInterval(interval);
@@ -297,13 +308,13 @@ document.onkeydown = (e) => {
 };
 
 // function generatePipes() {
-//   // maximo de un pipe
+//                                                               // maximo de un pipe
 //   const max = canvas.height - 100;
-//   // minimo de un pipe
+//                                                                 // minimo de un pipe
 //   const min = 50;
-//   // espacio calculado a traves de mucho research para saber donde si quepo, sin albur
+//                                                           // espacio calculado a traves de mucho research para saber donde si quepo, sin albur
 //   const ventanita = 100;
-//   // expresion matematica, hecha por los dioses, e Isaac Newton, para calcular max o min
+//                                                              // expresion matematica, hecha por los dioses, e Isaac Newton, para calcular max o min
 //   const randomHeight = Math.floor(Math.random() * (max - min));
 //   if (frames % 300 === 0) {
 //     obstacles.push(new Obstacle(0, randomHeight, true));
@@ -316,4 +327,43 @@ document.onkeydown = (e) => {
 // function drawPipes() {
 //   generatePipes();
 //   obstacles.forEach((pipe) => pipe.draw());
+// }
+///////////////////////////////////////////////////////
+///////////// THE FLASH
+//////////////////////////////////////////////
+
+// function generateIce() {
+//   if (frames % 200 === 0) {
+//     const randomPosition = Math.floor(Math.random() * canvas.height) + 50
+//     const ice = new Ice(randomPosition)
+//     obstacles.push(ice)
+//   }
+// }
+
+// function drawObstacles() {
+//   obstacles.forEach(ice => ice.draw())
+// }
+
+// function gameOver() {
+//   if (flash.hp === 0) {
+//     clearInterval(interval)
+//     ctx.font = '30px Arial'
+//     ctx.fillStyle = 'white'
+//     ctx.fillText('Game Over', canvas.width / 2 - 30, canvas.height / 2 - 10)
+//   }
+// }
+
+// function update() {
+//   frames++
+//   clearCanvas()
+//   board.draw()
+//   flashAnimation()
+//   flash.draw()
+//   flash.x += flash.vx
+//   flash.y += flash.vy
+//   flash.y += gravity
+//   checkColitions()
+//   generateIce()
+//   drawObstacles()
+//   gameOver()
 // }
