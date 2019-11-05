@@ -58,6 +58,8 @@ class Flappy {
     this.y = 150;
     this.width = 150;
     this.height = 150;
+    // vida
+    hp = 3;
     //  animacion
     this.animate = 0;
     this.position = 0;
@@ -128,7 +130,7 @@ class Mina {
     ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
   }
 }
-
+// clase pez Enemigo
 class Enemy {
   constructor() {
     // tamaño y ubicacion
@@ -183,27 +185,8 @@ class Enemy {
   }
 }
 
-// class Obstacle {
-//   constructor(y, height, type) {
-//     this.x = canvas.width + 50;
-//     this.y = y;
-//     this.height = height;
-//     this.width = 50;
-//     this.imgTop = new Image();
-//     this.imgTop.src = images.topPipe;
-//     this.imgBot = new Image();
-//     this.imgBot.src = images.bottomPipe;
-//     this.type = type;
-//   }
-//   draw() {
-//     this.x--;
-//     if (this.type) {
-//       ctx.drawImage(this.imgTop, this.x, this.y, this.width, this.height);
-//     } else {
-//       ctx.drawImage(this.imgBot, this.x, this.y, this.width, this.height);
-//     }
-//   }
-// }
+
+
 ///////////////////////////////////////////////
 //////    INSTANCIAS
 /////////////////////////////////////////////
@@ -230,6 +213,7 @@ function update() {
   checkCollition();
   drawObstacles();
   generarminas();
+  generarPezenemy();
 }
 
 function checkCollition() {
@@ -238,21 +222,34 @@ function checkCollition() {
       gameOver();
     }
   });
+  obstacles.forEach((mina, i) => {
+    if (flappy.isTouching(mina)) {
+      obstacles.splice(i, 1)
+      flappy.hp--
+    }
+  })
 }
 
 function generarminas() {
-  if (frames % 200 === 0) {
+  if (frames % 400 === 0) {
     const randomPosition = Math.floor(Math.random() * canvas.height) + 50
     const mina = new Mina(randomPosition)
     obstacles.push(mina)
   }
 }
 
-function drawObstacles() {
-  obstacles.forEach(mina => mina.draw())
+function generarPezenemy() {
+  if (frames % 400 === 0) {
+    const randomPosition = Math.floor(Math.random() * canvas.height) + 50
+    const enemy = new Enemy(randomPosition)
+    obstacles.push(enemy)
+  }
 }
 
-
+function drawObstacles() {
+  obstacles.forEach(mina => mina.draw())
+  obstacles.forEach(enemy => enemy.draw())
+}
 
 // function checkCollition() {
 //   obstacles.forEach((pipe) => {
@@ -307,27 +304,9 @@ document.onkeydown = (e) => {
   }
 };
 
-// function generatePipes() {
-//                                                               // maximo de un pipe
-//   const max = canvas.height - 100;
-//                                                                 // minimo de un pipe
-//   const min = 50;
-//                                                           // espacio calculado a traves de mucho research para saber donde si quepo, sin albur
-//   const ventanita = 100;
-//                                                              // expresion matematica, hecha por los dioses, e Isaac Newton, para calcular max o min
-//   const randomHeight = Math.floor(Math.random() * (max - min));
-//   if (frames % 300 === 0) {
-//     obstacles.push(new Obstacle(0, randomHeight, true));
-//     obstacles.push(
-//       new Obstacle(randomHeight + ventanita, canvas.height - randomHeight - ventanita, false)
-//     );
-//   }
-// }
 
-// function drawPipes() {
-//   generatePipes();
-//   obstacles.forEach((pipe) => pipe.draw());
-// }
+
+
 ///////////////////////////////////////////////////////
 ///////////// THE FLASH
 //////////////////////////////////////////////
