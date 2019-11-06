@@ -59,7 +59,7 @@ class Flappy {
     this.width = 150;
     this.height = 150;
     // vida
-    hp = 3;
+    this.hp = 3;
     //  animacion
     this.animate = 0;
     this.position = 0;
@@ -158,7 +158,6 @@ class Enemy {
         this.animate = 0;
       }
       this.animate++;
-      console.log(this.animate)
     }
     // imagenes para sprite
     //    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
@@ -203,23 +202,11 @@ function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function update() {
-  frames++;
-  clearCanvas();
-  board.draw();
-  flappy.draw();
-  mina.draw();
-  enemy.draw();
-  checkCollition();
-  drawObstacles();
-  generarminas();
-  generarPezenemy();
-}
-
 function checkCollition() {
-  obstacles.forEach((pipe) => {
-    if (flappy.isTouching(pipe)) {
-      gameOver();
+  obstacles.forEach((enemy) => {
+    if (flappy.isTouching(enemy)) {
+      obstacles.splice(i, 1)
+      flappy.hp--
     }
   });
   obstacles.forEach((mina, i) => {
@@ -229,6 +216,10 @@ function checkCollition() {
     }
   })
 }
+
+
+
+
 
 function generarminas() {
   if (frames % 400 === 0) {
@@ -251,23 +242,6 @@ function drawObstacles() {
   obstacles.forEach(enemy => enemy.draw())
 }
 
-// function checkCollition() {
-//   obstacles.forEach((pipe) => {
-//     if (flappy.isTouching(pipe)) {
-//       gameOver();
-//     }
-//   });
-// }
-
-
-function gameOver() { // texto de game over
-  ctx.font = '30px Courier';
-  ctx.fillText('Game over', canvas.width / 2, canvas.height / 2);
-  clearInterval(interval);
-}
-
-
-
 function start() {
   // si ya se habia ejecutado el juego, no lo dejes entrar despues
   if (interval) return;
@@ -280,6 +254,33 @@ function restart() {
   flappy.y = 70;
   start();
 }
+
+function gameOver() { // texto de game over
+  ctx.font = '30px Courier';
+  ctx.fillText('Game over', canvas.width / 2, canvas.height / 2);
+  clearInterval(interval);
+}
+
+function update() {
+  frames++;
+  clearCanvas();
+  board.draw();
+  flappy.draw();
+  mina.draw();
+  enemy.draw();
+  checkCollition();
+  drawObstacles();
+  generarminas();
+  generarPezenemy();
+}
+
+// function checkCollition() {
+//   obstacles.forEach((pipe) => {
+//     if (flappy.isTouching(pipe)) {
+//       gameOver();
+//     }
+//   });
+// }
 
 ///////////////////////////////////////////////
 //////   LISTENERS
