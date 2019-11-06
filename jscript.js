@@ -58,6 +58,8 @@ class Flappy {
     this.y = 150;
     this.width = 150;
     this.height = 150;
+    this.vx = 0;
+    this.vy = 0;
     // vida
     this.hp = 3;
     //  animacion
@@ -113,9 +115,27 @@ class Flappy {
       this.y + this.height > obstacle.y
     );
   }
+  moveLeft() {
+    if (-30 < this.vx)
+      this.vx -= 3
+    else this.vx = 0
+
+    if ((this.x - 60) < 0)
+      this.x = 0
+  }
+
+  moveRight() {
+    if (this.vx < 30)
+      this.vx += 3
+    else this.vx = 0
+
+    if ((this.x + 150) > canvas.width)
+      this.x = canvas.width - this.width
+  }
+
 }
 
-class Mina {
+class Mina() {
   constructor() {
     this.x = 800;
     this.y = 200;
@@ -270,6 +290,9 @@ function update() {
   clearCanvas();
   board.draw();
   flappy.draw();
+  flappy.x += flappy.vx
+  flappy.y += flappy.vy
+  console.log(flappy.vx, flappy.vy)
   mina.draw();
   enemy.draw();
   checkCollition();
@@ -294,20 +317,36 @@ function update() {
 document.onkeydown = (e) => {
   switch (e.keyCode) {
     case 32:
+      // case 32 -> space bar
       flappy.fly();
       break;
 
     case 13:
+      // case 13 -> enter
       start();
       break;
 
     case 82:
+      // case 82 -> R
       restart();
+      break;
+
+    case 37:
+      // case 37 -> flecha izq.
+      flappy.moveLeft();
+      break;
+
+    case 39:
+      // case 39 ->  flecha derecha
+      flappy.moveRight();
       break;
 
     default:
       break;
   }
+};
+document.onkeyup = e => {
+  flappy.vx = 0
 };
 
 
