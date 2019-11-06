@@ -24,7 +24,6 @@ let frames = 0; // ES una variable auxiliar para tener nocion del tiempo o cuant
 const obstacles = []; // Es un array donde vamos ir guardando los obstacles
 // Buena practica, deberiamos de splicear el obstacle que ya no sirve
 
-
 ///////////////////////////////////////////////
 //////   CLASES
 /////////////////////////////////////////////
@@ -41,7 +40,6 @@ class Board {
     };
   }
   draw() {
-
     this.x--; // decrementamos x para que vaya haciendo el efecto de movimiento
     if (this.x < -canvas.width) this.x = 0; // preguntamos si la primer imagen ya esta fuera del canvas
     // dibujamos la imagen normal
@@ -51,13 +49,13 @@ class Board {
   }
 }
 
-class Flappy {
+class Buzo {
   constructor() {
     // tamaño y ubicacion
     this.x = 30;
     this.y = 150;
-    this.width = 150;
-    this.height = 150;
+    this.width = 200;
+    this.height = 200;
     this.vx = 0;
     this.vy = 0;
     // vida
@@ -72,7 +70,8 @@ class Flappy {
       this.draw();
     };
   }
-  draw() { //metodo dibujo del buzo
+  draw() {
+    //metodo dibujo del buzo
     // efecto de gravedad
     this.y++;
     // limites verticales del buzo
@@ -91,7 +90,6 @@ class Flappy {
     }
     // sprite del buzo
     ctx.drawImage(
-
       this.img, // imagen de fuente
       (this.animate * 560) / 7, // posición de x en la imagen (fuente, sx)
       this.position * 80, // posición de y en la imagen (fuente, sy)
@@ -104,7 +102,7 @@ class Flappy {
     );
   }
 
-  fly() {
+  nadar() {
     this.y -= 20;
   }
   isTouching(obstacle) {
@@ -116,23 +114,98 @@ class Flappy {
     );
   }
   moveLeft() {
-    if (-30 < this.vx)
-      this.vx -= 3
-    else this.vx = 0
+    if (-30 < this.vx) this.vx -= 3;
+    else this.vx = 0;
 
-    if ((this.x - 60) < 0)
-      this.x = 0
+    if (this.x - 60 < 0) this.x = 0;
   }
 
   moveRight() {
-    if (this.vx < 30)
-      this.vx += 3
-    else this.vx = 0
+    if (this.vx < 30) this.vx += 3;
+    else this.vx = 0;
 
-    if ((this.x + 150) > canvas.width)
-      this.x = canvas.width - this.width
+    if (this.x + 150 > canvas.width) this.x = canvas.width - this.width;
+  }
+}
+
+class Pez {
+  //player 2- El PEZ
+  constructor() {
+    // tamaño y ubicacion
+    this.x = 30;
+    this.y = 350;
+    this.width = 230;
+    this.height = 40;
+    this.vx = 0;
+    this.vy = 0;
+    // vida
+    this.hp = 3;
+    //  animacion
+    this.animate = 0;
+    this.position = 0;
+    // el grafico
+    this.img = new Image();
+    this.img.src = images.pez;
+    this.img.onload = () => {
+      this.draw();
+    };
+  }
+  draw() {
+    //metodo dibujo del buzo
+    // efecto de gravedad
+    this.y++;
+    // limites verticales del buzo
+    if (this.y < 0) {
+      this.y = 0;
+    }
+    if (this.y > 700) {
+      this.y = 700;
+    }
+    //loop de la animacion del buzo
+    if (frames % 3 === 0) {
+      if (this.animate > 3) {
+        this.animate = 0;
+      }
+      this.animate++;
+    }
+    // sprite del pez
+    ctx.drawImage(
+      this.img, // imagen de fuente
+      (this.animate * 156) / 4, // posición de x en la imagen (fuente, sx)
+      this.position * 20, // posición de y en la imagen (fuente, sy)
+      156 / 4, // ancho desde la posición de x (sw)
+      20, // alto desde la posición de y (sw)
+      this.x, // posición de x en canvas (destino, dx)
+      this.y, // posición de y en canvas (destino, dy)
+      this.width, // ancho desde la posición de x en canvas (dw)
+      this.height // alto desde la posición de y en canvas (dh)
+    );
   }
 
+  nadar() {
+    this.y -= 20;
+  }
+  isTouching(obstacle) {
+    return (
+      this.x < obstacle.x + obstacle.width &&
+      this.x + this.width > obstacle.x &&
+      this.y < obstacle.y + obstacle.height &&
+      this.y + this.height > obstacle.y
+    );
+  }
+  moveLeft() {
+    if (-30 < this.vx) this.vx -= 3;
+    else this.vx = 0;
+
+    if (this.x - 60 < 0) this.x = 0;
+  }
+
+  moveRight() {
+    if (this.vx < 30) this.vx += 3;
+    else this.vx = 0;
+
+    if (this.x + 150 > canvas.width) this.x = canvas.width - this.width;
+  }
 }
 
 class Mina {
@@ -166,7 +239,7 @@ class Enemy {
     this.img.src = images.enemy;
     this.img.onload = () => {
       this.draw();
-    }
+    };
     //this.type = "";
   }
   draw() {
@@ -204,15 +277,14 @@ class Enemy {
   }
 }
 
-
-
 ///////////////////////////////////////////////
 //////    INSTANCIAS
 /////////////////////////////////////////////
 const board = new Board();
-const flappy = new Flappy();
+const buzo = new Buzo();
 const mina = new Mina();
 const enemy = new Enemy();
+const pez = new Pez();
 
 ///////////////////////////////////////////////
 //////   FUNCIONES
@@ -221,43 +293,45 @@ const enemy = new Enemy();
 function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
-
+// en check collition añadir dinamica de puntos
 function checkCollition() {
   obstacles.forEach((enemy, i) => {
-    if (flappy.isTouching(enemy)) {
-      obstacles.splice(i, 1)
-      flappy.hp--
-      console.log(flappy.hp)
+    if (buzo.isTouching(enemy)) {
+      obstacles.splice(i, 1);
+      buzo.hp--;
+      console.log(buzo.hp);
     }
   });
   obstacles.forEach((mina, i) => {
-    if (flappy.isTouching(mina)) {
-      obstacles.splice(i, 1)
-      flappy.hp--
-      console.log(flappy.hp)
+    if (buzo.isTouching(mina)) {
+      obstacles.splice(i, 1);
+      buzo.hp--;
+      console.log(buzo.hp);
     }
-  })
+  });
+
+  ///falta añadir al pez
 }
 
 function generarminas() {
   if (frames % 400 === 0) {
-    const randomPosition = Math.floor(Math.random() * canvas.height) + 50
-    const mina = new Mina(randomPosition)
-    obstacles.push(mina)
+    const randomPosition = Math.floor(Math.random() * canvas.height) + 50;
+    const mina = new Mina(randomPosition);
+    obstacles.push(mina);
   }
 }
 
 function generarPezenemy() {
   if (frames % 400 === 0) {
-    const randomPosition = Math.floor(Math.random() * canvas.height) + 50
-    const enemy = new Enemy(randomPosition)
-    obstacles.push(enemy)
+    const randomPosition = Math.floor(Math.random() * canvas.height) + 50;
+    const enemy = new Enemy(randomPosition);
+    obstacles.push(enemy);
   }
 }
 
 function drawObstacles() {
-  obstacles.forEach(mina => mina.draw())
-  obstacles.forEach(enemy => enemy.draw())
+  obstacles.forEach((mina) => mina.draw());
+  obstacles.forEach((enemy) => enemy.draw());
 }
 
 function start() {
@@ -268,15 +342,19 @@ function start() {
 
 function restart() {
   interval = false;
-  flappy.x = 30;
-  flappy.y = 70;
-  flappy.hp = 3;
+  buzo.x = 30;
+  buzo.y = 70;
+  buzo.hp = 3;
+  pez.x = 30;
+  pez.y = 70;
+  pez.hp = 3;
   start();
 }
 
-function gameOver() { // texto de game over
-  if (flappy.hp < 0) {
-    clearInterval(interval)
+function gameOver() {
+  // texto de game over
+  if (buzo.hp < 0 || pez.hp < 0) {
+    clearInterval(interval);
     ctx.font = '90px Courier';
     ctx.fillText('Game Over', canvas.width / 3, canvas.height / 2);
     ctx.font = '28px Courier';
@@ -289,10 +367,17 @@ function update() {
   frames++;
   clearCanvas();
   board.draw();
-  flappy.draw();
-  flappy.x += flappy.vx
-  flappy.y += flappy.vy
-  console.log(flappy.vx, flappy.vy)
+  ///
+  buzo.draw();
+  buzo.x += buzo.vx;
+  buzo.y += buzo.vy;
+  console.log(buzo.vx, buzo.vy);
+  ///
+  pez.draw();
+  pez.x += pez.vx;
+  pez.y += pez.vy;
+  console.log(pez.vx, pez.vy);
+  ///
   mina.draw();
   enemy.draw();
   checkCollition();
@@ -302,7 +387,6 @@ function update() {
   gameOver();
 }
 
-
 ///////////////////////////////////////////////
 //////   LISTENERS
 /////////////////////////////////////////////
@@ -311,7 +395,7 @@ document.onkeydown = (e) => {
   switch (e.keyCode) {
     case 32:
       // case 32 -> space bar
-      flappy.fly();
+      buzo.nadar();
       break;
 
     case 13:
@@ -326,24 +410,21 @@ document.onkeydown = (e) => {
 
     case 37:
       // case 37 -> flecha izq.
-      flappy.moveLeft();
+      buzo.moveLeft();
       break;
 
     case 39:
       // case 39 ->  flecha derecha
-      flappy.moveRight();
+      buzo.moveRight();
       break;
 
     default:
       break;
   }
 };
-document.onkeyup = e => {
-  flappy.vx = 0
+document.onkeyup = (e) => {
+  buzo.vx = 0;
 };
-
-
-
 
 ///////////////////////////////////////////////////////
 ///////////// THE FLASH
