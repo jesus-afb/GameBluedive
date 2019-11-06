@@ -257,8 +257,10 @@ function restart() {
 function gameOver() { // texto de game over
   if (flappy.hp < 0) {
     clearInterval(interval)
-    ctx.font = '30px Courier';
-    ctx.fillText('Game over', canvas.width / 2, canvas.height / 2);
+    ctx.font = '90px Courier';
+    ctx.fillText('Game Over', canvas.width / 3, canvas.height / 2);
+    ctx.font = '28px Courier';
+    ctx.fillText('  R para jugar de nuevo', canvas.width / 3, (canvas.height + 130) / 2);
     clearInterval(interval);
   }
 }
