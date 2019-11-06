@@ -368,9 +368,28 @@ function restart() {
   start();
 }
 
+function showlives() {
+  //  texto buzo
+  ctx.font = '25px Courier';
+  ctx.fillStyle = 'white';
+  ctx.fillText('buzo', 45, 30); // (texto ,x y )
+  //  vida de buzo
+  ctx.font = '20px Courier';
+  ctx.fillStyle = 'white';
+  ctx.fillText(buzo.hp, 110, 30);
+  //  texto pez
+  ctx.font = '25px Courier';
+  ctx.fillStyle = 'white';
+  ctx.fillText(' Pez', 800, 30);
+  //  hp de pez
+  ctx.font = '20px Courier';
+  ctx.fillStyle = 'white';
+  ctx.fillText(pez.hp, 880, 30);
+}
+
 function gameOver() {
   // texto de game over
-  if (buzo.hp < 0 || pez.hp < 0) {
+  if (buzo.hp <= 0 || pez.hp <= 0) {
     clearInterval(interval);
     ctx.font = '90px Courier';
     ctx.fillStyle = 'white';
@@ -385,6 +404,7 @@ function update() {
   frames++;
   clearCanvas();
   board.draw();
+  showlives();
   ///
   buzo.draw();
   buzo.x += buzo.vx;
@@ -410,6 +430,7 @@ function update() {
 /////////////////////////////////////////////
 
 document.onkeydown = (e) => {
+  e.preventDefault();
   switch (e.keyCode) {
     case 13:
       // case 13 -> enter
