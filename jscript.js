@@ -135,10 +135,10 @@ class Flappy {
 
 }
 
-class Mina() {
-  constructor() {
-    this.x = 800;
-    this.y = 200;
+class Mina {
+  constructor(y) {
+    this.x = canvas.width;
+    this.y = y;
     this.height = 100;
     this.width = 100;
     this.img = new Image();
@@ -152,10 +152,10 @@ class Mina() {
 }
 // clase pez Enemigo
 class Enemy {
-  constructor() {
+  constructor(y) {
     // tamaño y ubicacion
-    this.x = 800;
-    this.y = 300;
+    this.x = canvas.width;
+    this.y = y;
     this.height = 80;
     this.width = 80;
     //animacion
@@ -302,13 +302,6 @@ function update() {
   gameOver();
 }
 
-// function checkCollition() {
-//   obstacles.forEach((pipe) => {
-//     if (flappy.isTouching(pipe)) {
-//       gameOver();
-//     }
-//   });
-// }
 
 ///////////////////////////////////////////////
 //////   LISTENERS
