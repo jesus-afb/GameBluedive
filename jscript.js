@@ -15,7 +15,9 @@ const images = {
   buzo: './grafs/buzoP1.png',
   pez: './grafs/fishP2.png  ',
   mina: './grafs/mina.png  ',
-  enemy: './grafs/enemyfish1.png'
+  enemy: './grafs/enemyfish1.png',
+  plastic: './algo ',
+  seafood: './algomas'
 };
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
@@ -183,7 +185,7 @@ class Pez {
   }
 
   nadar() {
-    this.y -= 20;
+    this.y -= 25;
   }
   isTouching(obstacle) {
     return (
@@ -295,6 +297,7 @@ function clearCanvas() {
 }
 // en check collition añadir dinamica de puntos
 function checkCollition() {
+  //para el buzo
   obstacles.forEach((enemy, i) => {
     if (buzo.isTouching(enemy)) {
       obstacles.splice(i, 1);
@@ -310,7 +313,21 @@ function checkCollition() {
     }
   });
 
-  ///falta añadir al pez
+  ///Para al pez
+  obstacles.forEach((enemy, i) => {
+    if (pez.isTouching(enemy)) {
+      obstacles.splice(i, 1);
+      pez.hp--;
+      console.log(pez.hp + 'vida pez');
+    }
+  });
+  obstacles.forEach((mina, i) => {
+    if (pez.isTouching(mina)) {
+      obstacles.splice(i, 1);
+      pez.hp--;
+      console.log(pez.hp + 'vida pez');
+    }
+  });
 }
 
 function generarminas() {
@@ -346,7 +363,7 @@ function restart() {
   buzo.y = 70;
   buzo.hp = 3;
   pez.x = 30;
-  pez.y = 70;
+  pez.y = 100;
   pez.hp = 3;
   start();
 }
@@ -356,9 +373,10 @@ function gameOver() {
   if (buzo.hp < 0 || pez.hp < 0) {
     clearInterval(interval);
     ctx.font = '90px Courier';
+    ctx.fillStyle = 'white';
     ctx.fillText('Game Over', canvas.width / 3, canvas.height / 2);
     ctx.font = '28px Courier';
-    ctx.fillText('  R para jugar de nuevo', canvas.width / 3, (canvas.height + 130) / 2);
+    ctx.fillText('  Back Space para jugar', canvas.width / 3, (canvas.height + 130) / 2);
     clearInterval(interval);
   }
 }
@@ -393,29 +411,45 @@ function update() {
 
 document.onkeydown = (e) => {
   switch (e.keyCode) {
-    case 32:
-      // case 32 -> space bar
-      buzo.nadar();
-      break;
-
     case 13:
       // case 13 -> enter
       start();
       break;
 
-    case 82:
-      // case 82 -> R
+    case 8:
+      // case 8 -> backspace
       restart();
+      break;
+
+    // movimientos teclado- buzo
+    case 87:
+      // case 87 -> tecla W
+      buzo.nadar();
+      break;
+
+    case 65:
+      // case 65 -> tecla A
+      buzo.moveLeft();
+      break;
+
+    case 68:
+      // case 68 -> tecla D
+      buzo.moveRight();
+      break;
+    // movimientos teclado- pez
+    case 38:
+      // case 38 -> flecha arriba
+      pez.nadar();
       break;
 
     case 37:
       // case 37 -> flecha izq.
-      buzo.moveLeft();
+      pez.moveLeft();
       break;
 
     case 39:
       // case 39 ->  flecha derecha
-      buzo.moveRight();
+      pez.moveRight();
       break;
 
     default:
@@ -424,44 +458,5 @@ document.onkeydown = (e) => {
 };
 document.onkeyup = (e) => {
   buzo.vx = 0;
+  pez.vx = 0;
 };
-
-///////////////////////////////////////////////////////
-///////////// THE FLASH
-//////////////////////////////////////////////
-
-// function generateIce() {
-//   if (frames % 200 === 0) {
-//     const randomPosition = Math.floor(Math.random() * canvas.height) + 50
-//     const ice = new Ice(randomPosition)
-//     obstacles.push(ice)
-//   }
-// }
-
-// function drawObstacles() {
-//   obstacles.forEach(ice => ice.draw())
-// }
-
-// function gameOver() {
-//   if (flash.hp === 0) {
-//     clearInterval(interval)
-//     ctx.font = '30px Arial'
-//     ctx.fillStyle = 'white'
-//     ctx.fillText('Game Over', canvas.width / 2 - 30, canvas.height / 2 - 10)
-//   }
-// }
-
-// function update() {
-//   frames++
-//   clearCanvas()
-//   board.draw()
-//   flashAnimation()
-//   flash.draw()
-//   flash.x += flash.vx
-//   flash.y += flash.vy
-//   flash.y += gravity
-//   checkColitions()
-//   generateIce()
-//   drawObstacles()
-//   gameOver()
-// }
