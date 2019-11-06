@@ -203,23 +203,21 @@ function clearCanvas() {
 }
 
 function checkCollition() {
-  obstacles.forEach((enemy) => {
+  obstacles.forEach((enemy, i) => {
     if (flappy.isTouching(enemy)) {
       obstacles.splice(i, 1)
       flappy.hp--
+      console.log(flappy.hp)
     }
   });
   obstacles.forEach((mina, i) => {
     if (flappy.isTouching(mina)) {
       obstacles.splice(i, 1)
       flappy.hp--
+      console.log(flappy.hp)
     }
   })
 }
-
-
-
-
 
 function generarminas() {
   if (frames % 400 === 0) {
@@ -252,13 +250,17 @@ function restart() {
   interval = false;
   flappy.x = 30;
   flappy.y = 70;
+  flappy.hp = 3;
   start();
 }
 
 function gameOver() { // texto de game over
-  ctx.font = '30px Courier';
-  ctx.fillText('Game over', canvas.width / 2, canvas.height / 2);
-  clearInterval(interval);
+  if (flappy.hp < 0) {
+    clearInterval(interval)
+    ctx.font = '30px Courier';
+    ctx.fillText('Game over', canvas.width / 2, canvas.height / 2);
+    clearInterval(interval);
+  }
 }
 
 function update() {
@@ -272,6 +274,7 @@ function update() {
   drawObstacles();
   generarminas();
   generarPezenemy();
+  gameOver();
 }
 
 // function checkCollition() {
