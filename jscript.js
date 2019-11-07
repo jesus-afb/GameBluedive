@@ -17,7 +17,7 @@ const images = {
   mina: './grafs/mina.png  ',
   enemy: './grafs/enemyfish1.png',
   cover: './grafs/cover.jpg ',
-  //plastic: './algo ',
+  bgstartimg: './grafs/BGstart.png ',
   seafood: './grafs/costal.png'
 };
 const canvas = document.querySelector('canvas');
@@ -60,6 +60,23 @@ class Cover {
     this.height = canvas.height;
     this.img = new Image();
     this.img.src = images.cover;
+    this.img.onload = () => {
+      this.draw();
+    };
+  }
+  draw() {
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+  }
+}
+
+class BGstart {
+  constructor() {
+    this.x = 0;
+    this.y = 0;
+    this.width = canvas.width;
+    this.height = canvas.height;
+    this.img = new Image();
+    this.img.src = images.bgstartimg;
     this.img.onload = () => {
       this.draw();
     };
@@ -334,6 +351,7 @@ const food = new Food();
 const enemy = new Enemy();
 const pez = new Pez();
 const cover = new Cover();
+const bgstart = new BGstart();
 
 ///////////////////////////////////////////////
 //////   FUNCIONES
@@ -537,7 +555,7 @@ document.addEventListener('DOMContentLoaded', () => {
         restart();
         break;
 
-      // movimientos teclado- buzo
+        // movimientos teclado- buzo
       case 87:
         // case 87 -> tecla W
         buzo.nadar();
@@ -557,7 +575,7 @@ document.addEventListener('DOMContentLoaded', () => {
         buzo.bajar();
         break;
 
-      // movimientos teclado- pez
+        // movimientos teclado- pez
       case 38:
         // case 38 -> flecha arriba
         pez.nadar();
