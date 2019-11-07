@@ -16,8 +16,8 @@ const images = {
   pez: './grafs/fishP2.png  ',
   mina: './grafs/mina.png  ',
   enemy: './grafs/enemyfish1.png',
+  cover: './grafs/cover.jpg ',
   //plastic: './algo ',
-  //portada: /algo;
   seafood: './grafs/costal.png'
 };
 const canvas = document.querySelector('canvas');
@@ -49,6 +49,23 @@ class Board {
     ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     // dibujamos la otra imagen, despues de la primer imagen, para que ocupe el espacio en blanco, cuando la primer imagen esta fuera
     ctx.drawImage(this.img, this.x + canvas.width, this.y, this.width, this.height);
+  }
+}
+
+class Cover {
+  constructor() {
+    this.x = 0;
+    this.y = 0;
+    this.width = canvas.width;
+    this.height = canvas.height;
+    this.img = new Image();
+    this.img.src = images.cover;
+    this.img.onload = () => {
+      this.draw();
+    };
+  }
+  draw() {
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
   }
 }
 
@@ -316,6 +333,7 @@ const mina = new Mina();
 const food = new Food();
 const enemy = new Enemy();
 const pez = new Pez();
+const cover = new Cover();
 
 ///////////////////////////////////////////////
 //////   FUNCIONES
@@ -449,11 +467,13 @@ function gameOver() {
   if (buzo.hp <= 0 || pez.hp <= 0) {
     clearInterval(interval);
     if (buzo.hp < pez.hp) {
+      cover.draw();
       ctx.font = '80px Courier';
       ctx.fillStyle = 'white';
       ctx.fillText(' El Buzo perdió ', canvas.width / 4, canvas.height / 3);
     }
     if (buzo.hp > pez.hp) {
+      cover.draw();
       ctx.font = '80px Courier';
       ctx.fillStyle = 'white';
       ctx.fillText(' El Pez perdió ', canvas.width / 4, canvas.height / 3);
