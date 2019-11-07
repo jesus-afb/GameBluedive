@@ -85,7 +85,7 @@ class Buzo {
     }
     //loop de la animacion del buzo
     if (frames % 3 === 0) {
-      if (this.animate > 6) {
+      if (this.animate > 5) {
         this.animate = 0;
       }
       this.animate++;
@@ -165,7 +165,7 @@ class Pez {
     }
     //loop de la animacion del buzo
     if (frames % 3 === 0) {
-      if (this.animate > 3) {
+      if (this.animate > 2) {
         this.animate = 0;
       }
       this.animate++;
@@ -442,7 +442,7 @@ document.onkeydown = (e) => {
       restart();
       break;
 
-    // movimientos teclado- buzo
+      // movimientos teclado- buzo
     case 87:
       // case 87 -> tecla W
       buzo.nadar();
@@ -457,7 +457,7 @@ document.onkeydown = (e) => {
       // case 68 -> tecla D
       buzo.moveRight();
       break;
-    // movimientos teclado- pez
+      // movimientos teclado- pez
     case 38:
       // case 38 -> flecha arriba
       pez.nadar();
