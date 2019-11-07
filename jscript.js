@@ -20,6 +20,8 @@ const images = {
   bgstartimg: './grafs/BGstart.png ',
   seafood: './grafs/costal.png'
 };
+
+
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 let interval; // Interval esta todo nuestro intervalo del juego, es para poderlo parar o seguir
