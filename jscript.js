@@ -17,7 +17,7 @@ const images = {
   mina: './grafs/mina.png  ',
   enemy: './grafs/enemyfish1.png',
   plastic: './algo ',
-  seafood: './algomas'
+  seafood: './grafs/costal.png'
 };
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
@@ -62,6 +62,8 @@ class Buzo {
     this.vy = 0;
     // vida
     this.hp = 3;
+    // score
+    this.score = 0;
     //  animacion
     this.animate = 0;
     this.position = 0;
@@ -85,7 +87,7 @@ class Buzo {
     }
     //loop de la animacion del buzo
     if (frames % 3 === 0) {
-      if (this.animate > 5) {
+      if (this.animate > 6) {
         this.animate = 0;
       }
       this.animate++;
@@ -106,6 +108,9 @@ class Buzo {
 
   nadar() {
     this.y -= 20;
+  }
+  bajar() {
+    this.y += 20;
   }
   isTouching(obstacle) {
     return (
@@ -140,6 +145,8 @@ class Pez {
     this.height = 40;
     this.vx = 0;
     this.vy = 0;
+    // score
+    this.score = 0;
     // vida
     this.hp = 3;
     //  animacion
@@ -165,7 +172,7 @@ class Pez {
     }
     //loop de la animacion del buzo
     if (frames % 3 === 0) {
-      if (this.animate > 2) {
+      if (this.animate > 3) {
         this.animate = 0;
       }
       this.animate++;
@@ -186,6 +193,9 @@ class Pez {
 
   nadar() {
     this.y -= 25;
+  }
+  bajar() {
+    this.y += 20;
   }
   isTouching(obstacle) {
     return (
@@ -218,13 +228,30 @@ class Mina {
     this.width = 100;
     this.img = new Image();
     this.img.src = images.mina;
-    // this.type = type;
+    this.type = 'enemy';
   }
   draw() {
     this.x--;
     ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
   }
 }
+
+class Food {
+  constructor(x) {
+    this.x = x;
+    this.y = 0;
+    this.height = 100;
+    this.width = 100;
+    this.type = 'food';
+    this.img = new Image();
+    this.img.src = images.seafood;
+  }
+  draw() {
+    this.y++;
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+  }
+}
+
 // clase pez Enemigo
 class Enemy {
   constructor(y) {
@@ -242,7 +269,7 @@ class Enemy {
     this.img.onload = () => {
       this.draw();
     };
-    //this.type = "";
+    this.type = 'enemy';
   }
   draw() {
     //avance en x
@@ -285,6 +312,7 @@ class Enemy {
 const board = new Board();
 const buzo = new Buzo();
 const mina = new Mina();
+const food = new Food();
 const enemy = new Enemy();
 const pez = new Pez();
 
@@ -297,35 +325,32 @@ function clearCanvas() {
 }
 // en check collition añadir dinamica de puntos
 function checkCollition() {
-  //para el buzo
-  obstacles.forEach((enemy, i) => {
-    if (buzo.isTouching(enemy)) {
+  obstacles.forEach((item, i) => {
+    if (buzo.isTouching(item)) {
       obstacles.splice(i, 1);
-      buzo.hp--;
-      console.log(buzo.hp);
-    }
-  });
-  obstacles.forEach((mina, i) => {
-    if (buzo.isTouching(mina)) {
-      obstacles.splice(i, 1);
-      buzo.hp--;
-      console.log(buzo.hp);
+      switch (item.type) {
+        case 'food':
+          buzo.score++;
+          break;
+        case 'enemy':
+          buzo.hp--;
+          break;
+      }
     }
   });
 
   ///Para al pez
-  obstacles.forEach((enemy, i) => {
-    if (pez.isTouching(enemy)) {
+  obstacles.forEach((item, i) => {
+    if (pez.isTouching(item)) {
       obstacles.splice(i, 1);
-      pez.hp--;
-      console.log(pez.hp + 'vida pez');
-    }
-  });
-  obstacles.forEach((mina, i) => {
-    if (pez.isTouching(mina)) {
-      obstacles.splice(i, 1);
-      pez.hp--;
-      console.log(pez.hp + 'vida pez');
+      switch (item.type) {
+        case 'food':
+          pez.score++;
+          break;
+        case 'enemy':
+          pez.hp--;
+          break;
+      }
     }
   });
 }
@@ -335,6 +360,14 @@ function generarminas() {
     const randomPosition = Math.floor(Math.random() * canvas.height) + 50;
     const mina = new Mina(randomPosition);
     obstacles.push(mina);
+  }
+}
+
+function generarComida() {
+  if (frames % 400 === 0) {
+    const randomPosition = Math.floor(Math.random() * canvas.width) + 50;
+    const food = new Food(randomPosition);
+    obstacles.push(food);
   }
 }
 
@@ -349,6 +382,7 @@ function generarPezenemy() {
 function drawObstacles() {
   obstacles.forEach((mina) => mina.draw());
   obstacles.forEach((enemy) => enemy.draw());
+  obstacles.forEach((food) => food.draw());
 }
 
 function start() {
@@ -362,9 +396,11 @@ function restart() {
   buzo.x = 30;
   buzo.y = 70;
   buzo.hp = 3;
+  buzo.score = 0;
   pez.x = 30;
   pez.y = 100;
   pez.hp = 3;
+  pez.score = 0;
   start();
 }
 
@@ -387,10 +423,40 @@ function showlives() {
   ctx.fillText(pez.hp, 880, 30);
 }
 
+function showScores() {
+  //  texto buzo
+  ctx.font = '25px Courier';
+  ctx.fillStyle = 'white';
+  ctx.fillText('Score', 45, 70); // (texto ,x y )
+  //  vida de buzo
+  ctx.font = '20px Courier';
+  ctx.fillStyle = 'white';
+  ctx.fillText(buzo.score, 145, 70);
+  //  texto pez
+  ctx.font = '25px Courier';
+  ctx.fillStyle = 'white';
+  ctx.fillText('Score', 800, 70);
+  //  hp de pez
+  ctx.font = '20px Courier';
+  ctx.fillStyle = 'white';
+  ctx.fillText(pez.score, 880, 70);
+}
+
 function gameOver() {
   // texto de game over
+
   if (buzo.hp <= 0 || pez.hp <= 0) {
     clearInterval(interval);
+    if (buzo.hp < pez.hp) {
+      ctx.font = '80px Courier';
+      ctx.fillStyle = 'white';
+      ctx.fillText(' El Buzo perdió ', canvas.width / 4, canvas.height / 3);
+    }
+    if (buzo.hp > pez.hp) {
+      ctx.font = '80px Courier';
+      ctx.fillStyle = 'white';
+      ctx.fillText(' El Pez perdió ', canvas.width / 4, canvas.height / 3);
+    }
     ctx.font = '90px Courier';
     ctx.fillStyle = 'white';
     ctx.fillText('Game Over', canvas.width / 3, canvas.height / 2);
@@ -405,6 +471,7 @@ function update() {
   clearCanvas();
   board.draw();
   showlives();
+  showScores();
   ///
   buzo.draw();
   buzo.x += buzo.vx;
@@ -417,67 +484,84 @@ function update() {
   console.log(pez.vx, pez.vy);
   ///
   mina.draw();
+  food.draw();
   enemy.draw();
   checkCollition();
   drawObstacles();
   generarminas();
+  generarComida();
   generarPezenemy();
   gameOver();
 }
 
-///////////////////////////////////////////////
-//////   LISTENERS
-/////////////////////////////////////////////
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('start-game-button').addEventListener('click', (e) => {
+    start();
+  });
 
-document.onkeydown = (e) => {
-  e.preventDefault();
-  switch (e.keyCode) {
-    case 13:
-      // case 13 -> enter
-      start();
-      break;
+  ///////////////////////////////////////////////
+  //////   LISTENERS
+  /////////////////////////////////////////////
 
-    case 8:
-      // case 8 -> backspace
-      restart();
-      break;
+  document.onkeydown = (e) => {
+    e.preventDefault();
+    switch (e.keyCode) {
+      case 13:
+        // case 13 -> enter
+        start();
+        break;
+
+      case 8:
+        // case 8 -> backspace
+        restart();
+        break;
 
       // movimientos teclado- buzo
-    case 87:
-      // case 87 -> tecla W
-      buzo.nadar();
-      break;
+      case 87:
+        // case 87 -> tecla W
+        buzo.nadar();
+        break;
 
-    case 65:
-      // case 65 -> tecla A
-      buzo.moveLeft();
-      break;
+      case 65:
+        // case 65 -> tecla A
+        buzo.moveLeft();
+        break;
 
-    case 68:
-      // case 68 -> tecla D
-      buzo.moveRight();
-      break;
+      case 68:
+        // case 68 -> tecla D
+        buzo.moveRight();
+        break;
+      case 83:
+        // case83 -> tecla S
+        buzo.bajar();
+        break;
+
       // movimientos teclado- pez
-    case 38:
-      // case 38 -> flecha arriba
-      pez.nadar();
-      break;
+      case 38:
+        // case 38 -> flecha arriba
+        pez.nadar();
+        break;
+      case 40:
+        // case40 -> flecha abajo
+        pez.bajar();
+        break;
 
-    case 37:
-      // case 37 -> flecha izq.
-      pez.moveLeft();
-      break;
+      case 37:
+        // case 37 -> flecha izq.
+        pez.moveLeft();
+        break;
 
-    case 39:
-      // case 39 ->  flecha derecha
-      pez.moveRight();
-      break;
+      case 39:
+        // case 39 ->  flecha derecha
+        pez.moveRight();
+        break;
 
-    default:
-      break;
-  }
-};
-document.onkeyup = (e) => {
-  buzo.vx = 0;
-  pez.vx = 0;
-};
+      default:
+        break;
+    }
+  };
+  document.onkeyup = (e) => {
+    buzo.vx = 0;
+    pez.vx = 0;
+  };
+});

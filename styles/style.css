@@ -1,5 +1,49 @@
+body {
+  margin: 0;
+}
+
 canvas {
   border-style: solid;
   border-color: brown;
   border: 1px;
+}
+
+
+.background {
+  height: 120px;
+  background: rgb(2, 0, 36);
+  background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 84%, rgba(95, 159, 215, 0.8435749299719888) 91%, rgba(0, 212, 255, 1) 100%);
+}
+
+.background p {
+  margin: 0;
+}
+
+body {
+  background-color: #222;
+  color: #FFF;
+  font-family: 'Saira', sans-serif;
+  font-weight: 700;
+}
+
+.container {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+h1 {
+  display: block;
+  position: relative;
+  font-size: 100px;
+  background: linear-gradient(#00f2ff 0%, #e2fbff 50%, #0a343f 51%, #0094f7 100%);
+  background-blend-mode: multiply;
+  background-size: 10px 100px;
+  background-repeat: repeat;
+  line-height: 1;
+  -webkit-background-clip: text;
+  margin: 0;
+  -webkit-text-fill-color: transparent;
 }
