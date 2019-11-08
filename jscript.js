@@ -18,7 +18,7 @@ let good = new Audio('./audios/good.mp3');
 
 const images = {
   bg: './grafs/BG.png ',
-  buzo: './grafs/buzoP1.png',
+  buzo: './grafs/buzoP11.png',
   pez: './grafs/fishP2.png  ',
   mina: './grafs/mina.png  ',
   enemy: './grafs/enemyfish1.png',
