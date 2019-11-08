@@ -10,6 +10,12 @@
 //////   VARIABLES Y VARIABLES SECUNDARIAS
 //////////////////////////////////////////////////////////////////////////////
 
+let fondo1 = new Audio('./audios/auslander1.mp3');
+let fondo2 = new Audio('./audios/auslander2.mp3');
+let choque = new Audio('./audios/choque.mp3 ');
+let danuvio = new Audio('./audios/danuvio.mp3');
+let good = new Audio('./audios/good.mp3');
+
 const images = {
   bg: './grafs/BG.png ',
   buzo: './grafs/buzoP1.png',
@@ -20,7 +26,6 @@ const images = {
   bgstartimg: './grafs/BGstart.png ',
   seafood: './grafs/costal.png'
 };
-
 
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
@@ -369,9 +374,11 @@ function checkCollition() {
       obstacles.splice(i, 1);
       switch (item.type) {
         case 'food':
+          good.play();
           buzo.score++;
           break;
         case 'enemy':
+          choque.play();
           buzo.hp--;
           break;
       }
@@ -384,10 +391,12 @@ function checkCollition() {
       obstacles.splice(i, 1);
       switch (item.type) {
         case 'food':
+          good.play();
           pez.score++;
           break;
         case 'enemy':
           pez.hp--;
+          choque.play();
           break;
       }
     }
@@ -427,6 +436,8 @@ function drawObstacles() {
 function start() {
   // si ya se habia ejecutado el juego, no lo dejes entrar despues
   if (interval) return;
+  danuvio.pause();
+  fondo1.play();
   interval = setInterval(update, 1000 / 60);
 }
 
@@ -498,6 +509,9 @@ function gameOver() {
       ctx.fillStyle = 'white';
       ctx.fillText(' El Pez perdió ', canvas.width / 4, canvas.height / 3);
     }
+    fondo1.pause();
+    fondo2.pause();
+    danuvio.play();
     ctx.font = '90px Courier';
     ctx.fillStyle = 'white';
     ctx.fillText('Game Over', canvas.width / 3, canvas.height / 2);
@@ -557,7 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
         restart();
         break;
 
-        // movimientos teclado- buzo
+      // movimientos teclado- buzo
       case 87:
         // case 87 -> tecla W
         buzo.nadar();
@@ -577,7 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
         buzo.bajar();
         break;
 
-        // movimientos teclado- pez
+      // movimientos teclado- pez
       case 38:
         // case 38 -> flecha arriba
         pez.nadar();
